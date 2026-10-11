@@ -1,142 +1,86 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warspear Online — Фан-сайт</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1a1a2e;
-    color: #e0e0e0;
-    line-height: 1.6;
-}
+<header>
+    <div class="logo">Warspear Online</div>
+    <nav>
+        <a href="#home">Главная</a>
+        <a href="#news">Новости</a>
+        <a href="#download">Скачать</a>
+        <a href="#shop">Магазин</a>
+        <a href="#support">Поддержка</a>
+    </nav>
+</header>
 
-header {
-    background-color: #16213e;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #0f3460;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
+<main>
+    <section id="home" class="hero">
+        <h1>Добро пожаловать в Аринар!</h1>
+        <p>Классическая 2D MMORPG в стиле фэнтези. Сражайся, исследуй, побеждай.</p>
+        <br>
+        <a href="#download" class="btn">Скачать игру</a>
+    </section>
 
-.logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #e94560;
-    text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
-}
+    <section id="news">
+        <h2>Последние новости</h2>
+        <br>
+        <article class="news-item">
+            <h3>Обновление 13.5: Столкновение Миров</h3>
+            <p>Новая Арена Миров, расширенные настройки персонажей и многое другое.</p>
+            <small>11 октября 2026</small>
+        </article>
+        <article class="news-item">
+            <h3>Сезон Арены CXXVI</h3>
+            <p>Сразитесь за звание лучшего бойца в новых режимах Лига и Турнир.</p>
+            <small>4 сентября 2026</small>
+        </article>
+    </section>
 
-nav a {
-    color: #e0e0e0;
-    text-decoration: none;
-    margin-left: 1.5rem;
-    font-weight: 500;
-    transition: color 0.3s;
-}
+    <section id="download">
+        <h2>Скачать клиент</h2>
+        <p>Выберите свою платформу:</p>
+        <div class="download-links">
+            <a href="#" class="btn-small">Windows</a>
+            <a href="#" class="btn-small">Android</a>
+            <a href="#" class="btn-small">iOS</a>
+            <a href="#" class="btn-small">macOS</a>
+        </div>
+    </section>
 
-nav a:hover {
-    color: #e94560;
-}
+    <section id="shop">
+        <h2>Чудо-монеты</h2>
+        <p>Пополните свой баланс чудо-монет для покупки уникальных предметов.</p>
+        <br>
+        <button id="buy-miracle-coins" class="btn buy-btn">Купить чудо-монеты</button>
+    </section>
 
-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
+    <section id="support">
+        <h2>Поддержка</h2>
+        <p>Если у вас возникли вопросы, свяжитесь с нами в Telegram.</p>
+        <br>
+        <a href="https://t.me/nukm0" target="_blank" class="btn">Написать в поддержку</a>
+    </section>
+</main>
 
-section {
-    margin-bottom: 3rem;
-}
+<footer>
+    <p>&copy; 2026 Фан-сайт Warspear Online. Все права на игру принадлежат TITULUM.</p>
+    <p><a href="#">Политика конфиденциальности</a></p>
+</footer>
 
-.hero {
-    text-align: center;
-    padding: 4rem 1rem;
-    background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
-    border-radius: 12px;
-    margin-bottom: 3rem;
-}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const buyButton = document.getElementById('buy-miracle-coins');
+    buyButton.addEventListener('click', function() {
+        window.location.href = 'https://t.me/nukm0';
+    });
+});
+</script>
 
-.hero h1 {
-    font-size: 2.5rem;
-    color: #e94560;
-    margin-bottom: 1rem;
-}
-
-.btn {
-    display: inline-block;
-    background-color: #e94560;
-    color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s, transform 0.2s;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.btn:hover {
-    background-color: #c73650;
-    transform: translateY(-2px);
-}
-
-.btn-small {
-    display: inline-block;
-    background-color: #0f3460;
-    color: white;
-    padding: 0.5rem 1.2rem;
-    border-radius: 6px;
-    text-decoration: none;
-    margin: 0.3rem;
-    transition: background 0.3s;
-}
-
-.btn-small:hover {
-    background-color: #1a4a7a;
-}
-
-.news-item {
-    background-color: #16213e;
-    padding: 1.5rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    border-left: 4px solid #e94560;
-}
-
-.news-item h3 {
-    color: #e94560;
-    margin-bottom: 0.5rem;
-}
-
-.download-links {
-    margin-top: 1rem;
-}
-
-.buy-btn {
-    font-size: 1.2rem;
-    padding: 1rem 3rem;
-    background-color: #e94560;
-    box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
-}
-
-.buy-btn:hover {
-    box-shadow: 0 0 30px rgba(233, 69, 96, 0.7);
-}
-
-footer {
-    text-align: center;
-    padding: 2rem;
-    background-color: #16213e;
-    border-top: 2px solid #0f3460;
-    margin-top: 2rem;
-}
-
-footer a {
-    color: #e94560;
-    text-decoration: none;
-}
+</body>
+</html>
