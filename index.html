@@ -1,86 +1,667 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warspear Online — Фан-сайт</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeHub — Личный дашборд</title>
+<style>
+:root{
+  --bg:#0b0e1a;--panel:#151a2e;--panel2:#1c2238;--hover:#242b47;
+  --border:#2a3150;--text:#e8ebf5;--muted:#8a92b2;
+  --accent:#7c5cff;--green:#22c55e;--red:#ef4444;
+  --yellow:#f59e0b;--blue:#3b82f6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--panel);border-right:1px solid var(--border);
+  padding:20px 14px;position:fixed;top:0;bottom:0;left:0;overflow-y:auto}
+.brand{font-size:20px;font-weight:700;margin-bottom:24px;padding:0 8px;
+  background:linear-gradient(135deg,#7c5cff,#ec4899);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:8px;cursor:pointer;color:var(--muted);font-size:14px;
+  margin-bottom:4px;transition:.15s}
+.nav-item:hover{background:var(--hover);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-item .ico{width:18px;text-align:center;font-size:16px}
+.sidebar-footer{margin-top:20px;padding:0 8px;display:flex;flex-direction:column;gap:6px}
+.main{flex:1;margin-left:240px;padding:28px 32px;max-width:100%}
+.page{display:none}
+.page.active{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1{font-size:24px;margin-bottom:6px}
+.subtitle{color:var(--muted);font-size:13px;margin-bottom:24px}
+.grid{display:grid;gap:16px}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:18px}
+.stat-label{color:var(--muted);font-size:12px;text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:8px}
+.stat-value{font-size:24px;font-weight:700}
+.stat-value.green{color:var(--green)}
+.stat-value.red{color:var(--red)}
+.stat-value.yellow{color:var(--yellow)}
+.stat-value.blue{color:var(--blue)}
+.card-title{font-size:15px;font-weight:600;margin-bottom:14px;
+  display:flex;justify-content:space-between;align-items:center}
+.btn{background:var(--accent);color:#fff;border:none;padding:9px 16px;
+  border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+.btn.small{padding:6px 12px;font-size:12px}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn.ghost:hover{background:var(--hover)}
+.btn.danger{background:var(--red)}
+input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--border);
+  color:var(--text);padding:9px 12px;border-radius:8px;font-family:inherit;
+  font-size:13px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px;margin-top:10px}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{background:var(--panel2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;display:flex;justify-content:space-between;
+  align-items:center;gap:12px}
+.item-info{flex:1;min-width:0}
+.item-title{font-size:14px;font-weight:600;margin-bottom:3px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.item-amount{font-weight:700;font-size:14px;white-space:nowrap}
+.item-actions{display:flex;gap:6px}
+.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}
+.icon-btn{background:transparent;border:none;color:var(--muted);
+  cursor:pointer;font-size:16px;padding:4px 8px;border-radius:6px}
+.icon-btn:hover{background:var(--hover);color:var(--text)}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:10px;font-weight:600;text-transform:uppercase}
+.badge.income{background:rgba(34,197,94,.15);color:var(--green)}
+.badge.expense{background:rgba(239,68,68,.15);color:var(--red)}
+.badge.high{background:rgba(239,68,68,.15);color:var(--red)}
+.badge.medium{background:rgba(245,158,11,.15);color:var(--yellow)}
+.badge.low{background:rgba(59,130,246,.15);color:var(--blue)}
+.progress{background:var(--panel2);border-radius:10px;height:8px;
+  overflow:hidden;margin-top:8px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#7c5cff,#ec4899);
+  border-radius:10px;transition:.4s}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);
+  display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-bg.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:24px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.modal h3{margin-bottom:16px;font-size:18px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:24px}
+.habit-row{display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--border)}
+.habit-row:last-child{border-bottom:none}
+.habit-name{flex:1;font-size:14px;font-weight:500}
+.habit-days{display:flex;gap:4px}
+.day-dot{width:26px;height:26px;border-radius:6px;background:var(--panel2);
+  border:1px solid var(--border);cursor:pointer;display:flex;
+  align-items:center;justify-content:center;font-size:10px;
+  color:var(--muted);transition:.15s}
+.day-dot.done{background:var(--green);color:#fff;border-color:var(--green)}
+.day-dot:hover{transform:scale(1.1)}
+.filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filters input,.filters select{width:auto;flex:1;min-width:120px}
+.note-card{background:var(--panel2);border:1px solid var(--border);
+  border-radius:10px;padding:14px;cursor:pointer;transition:.15s}
+.note-card:hover{border-color:var(--accent)}
+.note-card h4{font-size:14px;margin-bottom:6px}
+.note-card p{font-size:12px;color:var(--muted);overflow:hidden;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.note-card .date{font-size:11px;color:var(--muted);margin-top:8px}
+.menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:1001;
+  background:var(--panel);border:1px solid var(--border);color:var(--text);
+  padding:8px 12px;border-radius:8px;cursor:pointer;font-size:18px}
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%);transition:.25s;z-index:999}
+  .sidebar.open{transform:none}
+  .main{margin-left:0;padding:70px 16px 24px}
+  .menu-toggle{display:block}
+  h1{font-size:20px}
+}
+</style>
 </head>
 <body>
 
-<header>
-    <div class="logo">Warspear Online</div>
-    <nav>
-        <a href="#home">Главная</a>
-        <a href="#news">Новости</a>
-        <a href="#download">Скачать</a>
-        <a href="#shop">Магазин</a>
-        <a href="#support">Поддержка</a>
-    </nav>
-</header>
+<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
 
-<main>
-    <section id="home" class="hero">
-        <h1>Добро пожаловать в Аринар!</h1>
-        <p>Классическая 2D MMORPG в стиле фэнтези. Сражайся, исследуй, побеждай.</p>
-        <br>
-        <a href="#download" class="btn">Скачать игру</a>
-    </section>
+<aside class="sidebar">
+  <div class="brand">LifeHub</div>
+  <div class="nav-item active" data-page="dashboard"><span class="ico">◉</span>Дашборд</div>
+  <div class="nav-item" data-page="finance"><span class="ico">₽</span>Финансы</div>
+  <div class="nav-item" data-page="debts"><span class="ico">↔</span>Долги</div>
+  <div class="nav-item" data-page="goals"><span class="ico">◎</span>Цели</div>
+  <div class="nav-item" data-page="tasks"><span class="ico">✓</span>Задачи</div>
+  <div class="nav-item" data-page="habits"><span class="ico">▦</span>Привычки</div>
+  <div class="nav-item" data-page="diary"><span class="ico">✎</span>Дневник</div>
+  <div class="sidebar-footer">
+    <button class="btn ghost small" onclick="exportData()">⬇ Экспорт данных</button>
+    <button class="btn ghost small" onclick="importData()">⬆ Импорт данных</button>
+  </div>
+</aside>
 
-    <section id="news">
-        <h2>Последние новости</h2>
-        <br>
-        <article class="news-item">
-            <h3>Обновление 13.5: Столкновение Миров</h3>
-            <p>Новая Арена Миров, расширенные настройки персонажей и многое другое.</p>
-            <small>11 октября 2026</small>
-        </article>
-        <article class="news-item">
-            <h3>Сезон Арены CXXVI</h3>
-            <p>Сразитесь за звание лучшего бойца в новых режимах Лига и Турнир.</p>
-            <small>4 сентября 2026</small>
-        </article>
-    </section>
+<main class="main">
 
-    <section id="download">
-        <h2>Скачать клиент</h2>
-        <p>Выберите свою платформу:</p>
-        <div class="download-links">
-            <a href="#" class="btn-small">Windows</a>
-            <a href="#" class="btn-small">Android</a>
-            <a href="#" class="btn-small">iOS</a>
-            <a href="#" class="btn-small">macOS</a>
-        </div>
-    </section>
+<section class="page active" id="page-dashboard">
+  <h1>Дашборд</h1>
+  <p class="subtitle">Обзор всей твоей жизни в одном месте</p>
+  <div class="grid grid-4" id="dash-stats"></div>
+  <div class="grid grid-2" style="margin-top:20px">
+    <div class="card"><div class="card-title">Последние операции</div>
+      <div class="list" id="dash-transactions"></div></div>
+    <div class="card"><div class="card-title">Задачи на сегодня</div>
+      <div class="list" id="dash-tasks"></div></div>
+    <div class="card"><div class="card-title">Активные цели</div>
+      <div class="list" id="dash-goals"></div></div>
+    <div class="card"><div class="card-title">Последние записи</div>
+      <div class="list" id="dash-notes"></div></div>
+  </div>
+</section>
 
-    <section id="shop">
-        <h2>Чудо-монеты</h2>
-        <p>Пополните свой баланс чудо-монет для покупки уникальных предметов.</p>
-        <br>
-        <button id="buy-miracle-coins" class="btn buy-btn">Купить чудо-монеты</button>
-    </section>
+<section class="page" id="page-finance">
+  <h1>Финансы</h1>
+  <p class="subtitle">Доходы, расходы и баланс</p>
+  <div class="grid grid-4" id="fin-stats"></div>
+  <div class="card" style="margin-top:20px">
+    <div class="card-title">Операции
+      <button class="btn small" onclick="openTxModal()">+ Добавить</button></div>
+    <div class="filters">
+      <input type="text" id="tx-search" placeholder="Поиск..." oninput="renderFinance()">
+      <select id="tx-filter-type" onchange="renderFinance()">
+        <option value="">Все типы</option>
+        <option value="income">Доходы</option>
+        <option value="expense">Расходы</option>
+      </select>
+      <select id="tx-filter-month" onchange="renderFinance()"></select>
+    </div>
+    <div class="list" id="fin-list"></div>
+  </div>
+</section>
 
-    <section id="support">
-        <h2>Поддержка</h2>
-        <p>Если у вас возникли вопросы, свяжитесь с нами в Telegram.</p>
-        <br>
-        <a href="https://t.me/nukm0" target="_blank" class="btn">Написать в поддержку</a>
-    </section>
+<section class="page" id="page-debts">
+  <h1>Долги</h1>
+  <p class="subtitle">Кому должен ты и кто должен тебе</p>
+  <div class="grid grid-3" id="debt-stats"></div>
+  <div class="grid grid-2" style="margin-top:20px">
+    <div class="card"><div class="card-title">Я должен
+      <button class="btn small" onclick="openDebtModal('i_owe')">+</button></div>
+      <div class="list" id="debts-i-owe"></div></div>
+    <div class="card"><div class="card-title">Мне должны
+      <button class="btn small" onclick="openDebtModal('owe_me')">+</button></div>
+      <div class="list" id="debts-owe-me"></div></div>
+  </div>
+</section>
+
+<section class="page" id="page-goals">
+  <h1>Цели</h1>
+  <p class="subtitle">Что ты хочешь достичь</p>
+  <div class="card">
+    <div class="card-title">Мои цели
+      <button class="btn small" onclick="openGoalModal()">+ Новая цель</button></div>
+    <div class="list" id="goals-list"></div>
+  </div>
+</section>
+
+<section class="page" id="page-tasks">
+  <h1>Задачи и планы</h1>
+  <p class="subtitle">Организуй свой день</p>
+  <div class="grid grid-4" id="task-stats"></div>
+  <div class="card" style="margin-top:20px">
+    <div class="card-title">Все задачи
+      <button class="btn small" onclick="openTaskModal()">+ Новая задача</button></div>
+    <div class="filters">
+      <select id="task-filter" onchange="renderTasks()">
+        <option value="active">Активные</option>
+        <option value="today">На сегодня</option>
+        <option value="done">Выполненные</option>
+        <option value="all">Все</option>
+      </select>
+    </div>
+    <div class="list" id="tasks-list"></div>
+  </div>
+</section>
+
+<section class="page" id="page-habits">
+  <h1>Привычки</h1>
+  <p class="subtitle">Отслеживай ежедневные привычки</p>
+  <div class="card">
+    <div class="card-title">Привычки за неделю
+      <button class="btn small" onclick="openHabitModal()">+ Привычка</button></div>
+    <div id="habits-list"></div>
+  </div>
+</section>
+
+<section class="page" id="page-diary">
+  <h1>Дневник</h1>
+  <p class="subtitle">Записывай мысли, идеи, события</p>
+  <div class="card">
+    <div class="card-title">Записи
+      <button class="btn small" onclick="openNoteModal()">+ Новая запись</button></div>
+    <div class="grid grid-3" id="notes-list"></div>
+  </div>
+</section>
+
 </main>
 
-<footer>
-    <p>&copy; 2026 Фан-сайт Warspear Online. Все права на игру принадлежат TITULUM.</p>
-    <p><a href="#">Политика конфиденциальности</a></p>
-</footer>
+<div class="modal-bg" id="modal-bg"><div class="modal" id="modal-content"></div></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const buyButton = document.getElementById('buy-miracle-coins');
-    buyButton.addEventListener('click', function() {
-        window.location.href = 'https://t.me/nukm0';
-    });
-});
-</script>
+const KEY='lifehub_data_v1';
+let DB={transactions:[],debts:[],goals:[],tasks:[],notes:[],habits:[]};
 
+function load(){try{const r=localStorage.getItem(KEY);if(r)DB=Object.assign(DB,JSON.parse(r));}catch(e){}}
+function save(){localStorage.setItem(KEY,JSON.stringify(DB));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function fmt(n){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n||0);}
+function localDate(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function today(){return localDate();}
+function fmtDate(d){if(!d)return'—';const p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0];}
+function esc(s){if(s==null)return'';return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.onclick=()=>{
+    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+el.dataset.page).classList.add('active');
+    document.querySelector('.sidebar').classList.remove('open');
+    renderAll();
+  };
+});
+
+function openModal(h){document.getElementById('modal-content').innerHTML=h;document.getElementById('modal-bg').classList.add('show');}
+function closeModal(){document.getElementById('modal-bg').classList.remove('show');}
+document.getElementById('modal-bg').onclick=e=>{if(e.target.id==='modal-bg')closeModal();};
+
+function renderAll(){fillMonthFilter();renderDashboard();renderFinance();renderDebts();renderGoals();renderTasks();renderHabits();renderNotes();}
+
+/* DASHBOARD */
+function renderDashboard(){
+  const inc=DB.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=DB.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const bal=inc-exp;
+  const iOwe=DB.debts.filter(d=>d.type==='i_owe'&&!d.paid).reduce((s,d)=>s+d.amount,0);
+  const oweMe=DB.debts.filter(d=>d.type==='owe_me'&&!d.paid).reduce((s,d)=>s+d.amount,0);
+  const activeTasks=DB.tasks.filter(t=>!t.done).length;
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="card"><div class="stat-label">Баланс</div>
+      <div class="stat-value ${bal>=0?'green':'red'}">${fmt(bal)} ₽</div></div>
+    <div class="card"><div class="stat-label">Должен я</div>
+      <div class="stat-value red">${fmt(iOwe)} ₽</div></div>
+    <div class="card"><div class="stat-label">Должны мне</div>
+      <div class="stat-value green">${fmt(oweMe)} ₽</div></div>
+    <div class="card"><div class="stat-label">Задач активно</div>
+      <div class="stat-value blue">${activeTasks}</div></div>`;
+  const recent=DB.transactions.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  document.getElementById('dash-transactions').innerHTML=recent.length?recent.map(t=>`
+    <div class="item"><div class="item-info">
+      <div class="item-title">${esc(t.note||t.category)}</div>
+      <div class="item-meta"><span class="badge ${t.type}">${t.type==='income'?'Доход':'Расход'}</span>
+      <span>${fmtDate(t.date)}</span></div></div>
+      <div class="item-amount ${t.type==='income'?'green':'red'}">
+        ${t.type==='income'?'+':'-'}${fmt(t.amount)} ₽</div></div>`).join('')
+    :'<div class="empty">Пока нет операций</div>';
+  const td=today();
+  const tt=DB.tasks.filter(t=>!t.done&&(!t.deadline||t.deadline<=td)).slice(0,5);
+  document.getElementById('dash-tasks').innerHTML=tt.length?tt.map(t=>`
+    <div class="item"><div class="item-info">
+      <div class="item-title">${esc(t.title)}</div>
+      <div class="item-meta"><span class="badge ${t.priority}">${prioLabel(t.priority)}</span>
+      ${t.deadline?'<span>до '+fmtDate(t.deadline)+'</span>':''}</div></div></div>`).join('')
+    :'<div class="empty">Задач нет 🎉</div>';
+  const ag=DB.goals.filter(g=>g.current<g.target).slice(0,4);
+  document.getElementById('dash-goals').innerHTML=ag.length?ag.map(g=>{
+    const pct=Math.min(100,g.target>0?(g.current/g.target)*100:0);
+    return `<div style="padding:8px 0">
+      <div style="display:flex;justify-content:space-between;font-size:13px">
+        <span>${esc(g.title)}</span><span style="color:var(--muted)">${Math.round(pct)}%</span></div>
+      <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div></div>`;
+  }).join(''):'<div class="empty">Целей нет</div>';
+  const rn=DB.notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3);
+  document.getElementById('dash-notes').innerHTML=rn.length?rn.map(n=>`
+    <div class="item"><div class="item-info">
+      <div class="item-title">${esc(n.title)}</div>
+      <div class="item-meta"><span>${fmtDate(n.date)}</span></div></div></div>`).join('')
+    :'<div class="empty">Записей нет</div>';
+}
+
+/* FINANCE */
+function fillMonthFilter(){
+  const sel=document.getElementById('tx-filter-month');if(!sel)return;
+  const months=[...new Set(DB.transactions.map(t=>t.date.slice(0,7)))].sort().reverse();
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Все месяцы</option>'+
+    months.map(m=>`<option value="${m}">${m}</option>`).join('');
+  sel.value=cur;
+}
+function renderFinance(){
+  const inc=DB.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=DB.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const mNow=today().slice(0,7);
+  const mI=DB.transactions.filter(t=>t.type==='income'&&t.date.startsWith(mNow)).reduce((s,t)=>s+t.amount,0);
+  const mE=DB.transactions.filter(t=>t.type==='expense'&&t.date.startsWith(mNow)).reduce((s,t)=>s+t.amount,0);
+  document.getElementById('fin-stats').innerHTML=`
+    <div class="card"><div class="stat-label">Общий баланс</div>
+      <div class="stat-value ${inc-exp>=0?'green':'red'}">${fmt(inc-exp)} ₽</div></div>
+    <div class="card"><div class="stat-label">Всего доходов</div>
+      <div class="stat-value green">${fmt(inc)} ₽</div></div>
+    <div class="card"><div class="stat-label">Всего расходов</div>
+      <div class="stat-value red">${fmt(exp)} ₽</div></div>
+    <div class="card"><div class="stat-label">Этот месяц</div>
+      <div class="stat-value">${fmt(mI-mE)} ₽</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">+${fmt(mI)} / -${fmt(mE)}</div></div>`;
+  const q=(document.getElementById('tx-search').value||'').toLowerCase();
+  const ft=document.getElementById('tx-filter-type').value;
+  const fm=document.getElementById('tx-filter-month').value;
+  let list=DB.transactions.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(q)list=list.filter(t=>(t.note||'').toLowerCase().includes(q)||(t.category||'').toLowerCase().includes(q));
+  if(ft)list=list.filter(t=>t.type===ft);
+  if(fm)list=list.filter(t=>t.date.startsWith(fm));
+  document.getElementById('fin-list').innerHTML=list.length?list.map(t=>`
+    <div class="item"><div class="item-info">
+      <div class="item-title">${esc(t.category)}${t.note?' — '+esc(t.note):''}</div>
+      <div class="item-meta"><span class="badge ${t.type}">${t.type==='income'?'Доход':'Расход'}</span>
+      <span>${fmtDate(t.date)}</span></div></div>
+      <div class="item-amount ${t.type==='income'?'green':'red'}">
+        ${t.type==='income'?'+':'-'}${fmt(t.amount)} ₽</div>
+      <div class="item-actions">
+        <button class="icon-btn" onclick="delTx('${t.id}')">✕</button></div></div>`).join('')
+    :'<div class="empty">Операций нет</div>';
+}
+function openTxModal(){
+  openModal(`<h3>Новая операция</h3>
+    <label>Тип</label><select id="tx-type">
+      <option value="expense">Расход</option><option value="income">Доход</option></select>
+    <label>Категория</label>
+    <input id="tx-category" list="cat-list" placeholder="Продукты, Зарплата...">
+    <datalist id="cat-list">
+      <option value="Продукты"><option value="Транспорт"><option value="Жильё">
+      <option value="Развлечения"><option value="Здоровье"><option value="Одежда">
+      <option value="Зарплата"><option value="Фриланс"><option value="Подарок">
+    </datalist>
+    <label>Сумма, ₽</label><input id="tx-amount" type="number" step="0.01">
+    <label>Заметка</label><input id="tx-note" placeholder="Необязательно">
+    <label>Дата</label><input id="tx-date" type="date" value="${today()}">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="saveTx()">Сохранить</button></div>`);
+}
+function saveTx(){
+  const d={type:document.getElementById('tx-type').value,
+    category:document.getElementById('tx-category').value.trim()||'Без категории',
+    amount:parseFloat(document.getElementById('tx-amount').value)||0,
+    note:document.getElementById('tx-note').value.trim(),
+    date:document.getElementById('tx-date').value||today()};
+  if(!d.amount){alert('Укажи сумму');return;}
+  DB.transactions.push({id:uid(),...d});
+  save();closeModal();renderAll();
+}
+function delTx(id){if(!confirm('Удалить?'))return;DB.transactions=DB.transactions.filter(x=>x.id!==id);save();renderAll();}
+
+/* DEBTS */
+function renderDebts(){
+  const iOwe=DB.debts.filter(d=>d.type==='i_owe'&&!d.paid);
+  const oweMe=DB.debts.filter(d=>d.type==='owe_me'&&!d.paid);
+  const iS=iOwe.reduce((s,d)=>s+d.amount,0),oS=oweMe.reduce((s,d)=>s+d.amount,0);
+  document.getElementById('debt-stats').innerHTML=`
+    <div class="card"><div class="stat-label">Я должен</div>
+      <div class="stat-value red">${fmt(iS)} ₽</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">${iOwe.length} записей</div></div>
+    <div class="card"><div class="stat-label">Мне должны</div>
+      <div class="stat-value green">${fmt(oS)} ₽</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">${oweMe.length} записей</div></div>
+    <div class="card"><div class="stat-label">Итог</div>
+      <div class="stat-value ${oS-iS>=0?'green':'red'}">${fmt(oS-iS)} ₽</div></div>`;
+  const r=(list,id)=>{const c=document.getElementById(id);
+    if(!list.length){c.innerHTML='<div class="empty">Пусто</div>';return;}
+    c.innerHTML=list.map(d=>`<div class="item"><div class="item-info">
+      <div class="item-title">${esc(d.person)}</div>
+      <div class="item-meta">${d.due?'<span>до '+fmtDate(d.due)+'</span>':''}
+      ${d.note?'<span>'+esc(d.note)+'</span>':''}</div></div>
+      <div class="item-amount">${fmt(d.amount)} ₽</div>
+      <div class="item-actions">
+        <button class="icon-btn" title="Выплачено" onclick="toggleDebtPaid('${d.id}')">✓</button>
+        <button class="icon-btn" onclick="delDebt('${d.id}')">✕</button></div></div>`).join('');};
+  r(iOwe,'debts-i-owe');r(oweMe,'debts-owe-me');
+}
+function openDebtModal(t){
+  openModal(`<h3>${t==='i_owe'?'Я должен':'Мне должны'}</h3>
+    <label>Кому / Кто</label><input id="debt-person" placeholder="Имя">
+    <label>Сумма, ₽</label><input id="debt-amount" type="number" step="0.01">
+    <label>Срок</label><input id="debt-due" type="date">
+    <label>Заметка</label><input id="debt-note" placeholder="За что долг">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="saveDebt('${t}')">Сохранить</button></div>`);
+}
+function saveDebt(t){
+  const d={type:t,person:document.getElementById('debt-person').value.trim(),
+    amount:parseFloat(document.getElementById('debt-amount').value)||0,
+    due:document.getElementById('debt-due').value,
+    note:document.getElementById('debt-note').value.trim(),
+    paid:false,created:today()};
+  if(!d.person||!d.amount){alert('Заполни имя и сумму');return;}
+  DB.debts.push({id:uid(),...d});save();closeModal();renderAll();
+}
+function toggleDebtPaid(id){const d=DB.debts.find(x=>x.id===id);if(d)d.paid=!d.paid;save();renderAll();}
+function delDebt(id){if(!confirm('Удалить?'))return;DB.debts=DB.debts.filter(x=>x.id!==id);save();renderAll();}
+
+/* GOALS */
+function renderGoals(){
+  const c=document.getElementById('goals-list');
+  if(!DB.goals.length){c.innerHTML='<div class="empty">Целей пока нет</div>';return;}
+  c.innerHTML=DB.goals.map(g=>{
+    const pct=Math.min(100,g.target>0?(g.current/g.target)*100:0);
+    const done=g.current>=g.target;
+    return `<div class="item" style="flex-direction:column;align-items:stretch">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+        <div class="item-info">
+          <div class="item-title">${done?'✅ ':''}${esc(g.title)}</div>
+          <div class="item-meta">${g.deadline?'<span>до '+fmtDate(g.deadline)+'</span>':''}
+          ${g.note?'<span>'+esc(g.note)+'</span>':''}</div></div>
+        <div class="item-actions">
+          <button class="icon-btn" onclick="addGoalProgress('${g.id}')" title="Добавить">＋</button>
+          <button class="icon-btn" onclick="delGoal('${g.id}')">✕</button></div></div>
+      <div class="progress" style="margin-top:10px"><div class="progress-bar" style="width:${pct}%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px">
+        <span>${fmt(g.current)} / ${fmt(g.target)}${g.unit?' '+g.unit:''}</span>
+        <span>${Math.round(pct)}%</span></div></div>`;
+  }).join('');
+}
+function openGoalModal(){
+  openModal(`<h3>Новая цель</h3>
+    <label>Название</label><input id="goal-title" placeholder="Накопить на отпуск">
+    <label>Целевое значение</label><input id="goal-target" type="number" step="0.01">
+    <label>Текущее значение</label><input id="goal-current" type="number" step="0.01" value="0">
+    <label>Единица</label><input id="goal-unit" placeholder="₽, км, кг, раз...">
+    <label>Дедлайн</label><input id="goal-deadline" type="date">
+    <label>Заметка</label><input id="goal-note">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="saveGoal()">Сохранить</button></div>`);
+}
+function saveGoal(){
+  const d={title:document.getElementById('goal-title').value.trim(),
+    target:parseFloat(document.getElementById('goal-target').value)||0,
+    current:parseFloat(document.getElementById('goal-current').value)||0,
+    unit:document.getElementById('goal-unit').value.trim(),
+    deadline:document.getElementById('goal-deadline').value,
+    note:document.getElementById('goal-note').value.trim()};
+  if(!d.title||!d.target){alert('Заполни название и цель');return;}
+  DB.goals.push({id:uid(),...d});save();closeModal();renderAll();
+}
+function addGoalProgress(id){
+  const g=DB.goals.find(x=>x.id===id);
+  const v=prompt('Добавить к текущему ('+(g.unit||'')+'):');
+  if(v===null)return;
+  const n=parseFloat(v);if(isNaN(n))return;
+  g.current+=n;save();renderAll();
+}
+function delGoal(id){if(!confirm('Удалить цель?'))return;DB.goals=DB.goals.filter(x=>x.id!==id);save();renderAll();}
+
+/* TASKS */
+function prioLabel(p){return p==='high'?'Высокий':p==='medium'?'Средний':'Низкий';}
+function renderTasks(){
+  const c=document.getElementById('tasks-list');
+  const all=DB.tasks.slice();
+  const done=all.filter(t=>t.done).length;
+  const active=all.filter(t=>!t.done).length;
+  const td=today();
+  const todayCount=all.filter(t=>!t.done&&t.deadline===td).length;
+  const overdue=all.filter(t=>!t.done&&t.deadline&&t.deadline<td).length;
+  document.getElementById('task-stats').innerHTML=`
+    <div class="card"><div class="stat-label">Активных</div>
+      <div class="stat-value blue">${active}</div></div>
+    <div class="card"><div class="stat-label">На сегодня</div>
+      <div class="stat-value yellow">${todayCount}</div></div>
+    <div class="card"><div class="stat-label">Просрочено</div>
+      <div class="stat-value red">${overdue}</div></div>
+    <div class="card"><div class="stat-label">Выполнено</div>
+      <div class="stat-value green">${done}</div></div>`;
+  const f=document.getElementById('task-filter').value;
+  let list=all;
+  if(f==='active')list=all.filter(t=>!t.done);
+  else if(f==='done')list=all.filter(t=>t.done);
+  else if(f==='today')list=all.filter(t=>!t.done&&t.deadline===td);
+  const po={high:0,medium:1,low:2};
+  list=list.slice().sort((a,b)=>{
+    if(a.done!==b.done)return a.done?1:-1;
+    if(a.priority!==b.priority)return po[a.priority]-po[b.priority];
+    return (a.deadline||'9999').localeCompare(b.deadline||'9999');
+  });
+  if(!list.length){c.innerHTML='<div class="empty">Задач нет</div>';return;}
+  c.innerHTML=list.map(t=>{
+    const od=!t.done&&t.deadline&&t.deadline<td;
+    return `<div class="item">
+      <input type="checkbox" style="width:auto;flex:0" ${t.done?'checked':''} onchange="toggleTask('${t.id}')">
+      <div class="item-info">
+        <div class="item-title" style="${t.done?'text-decoration:line-through;color:var(--muted)':''}">
+          ${esc(t.title)}</div>
+        <div class="item-meta">
+          <span class="badge ${t.priority}">${prioLabel(t.priority)}</span>
+          ${t.deadline?'<span style="'+(od?'color:var(--red)':'')+'">до '+fmtDate(t.deadline)+'</span>':''}
+        </div></div>
+      <button class="icon-btn" onclick="delTask('${t.id}')">✕</button></div>`;
+  }).join('');
+}
+function openTaskModal(){
+  openModal(`<h3>Новая задача</h3>
+    <label>Что сделать</label><input id="task-title" placeholder="Купить продукты">
+    <label>Приоритет</label><select id="task-priority">
+      <option value="low">Низкий</option>
+      <option value="medium" selected>Средний</option>
+      <option value="high">Высокий</option></select>
+    <label>Дедлайн</label><input id="task-deadline" type="date">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="saveTask()">Сохранить</button></div>`);
+}
+function saveTask(){
+  const d={title:document.getElementById('task-title').value.trim(),
+    priority:document.getElementById('task-priority').value,
+    deadline:document.getElementById('task-deadline').value,done:false};
+  if(!d.title){alert('Введи задачу');return;}
+  DB.tasks.push({id:uid(),...d});save();closeModal();renderAll();
+}
+function toggleTask(id){const t=DB.tasks.find(x=>x.id===id);if(t)t.done=!t.done;save();renderAll();}
+function delTask(id){DB.tasks=DB.tasks.filter(x=>x.id!==id);save();renderAll();}
+
+/* HABITS */
+function renderHabits(){
+  const c=document.getElementById('habits-list');
+  if(!DB.habits.length){c.innerHTML='<div class="empty">Привычек нет</div>';return;}
+  const days=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(localDate(d));}
+  const dl=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  c.innerHTML=DB.habits.map(h=>{
+    const dots=days.map(d=>{
+      const done=h.days&&h.days[d];
+      const [y,m,dd]=d.split('-').map(Number);
+      const dayIdx=new Date(y,m-1,dd).getDay();
+      return `<div class="day-dot ${done?'done':''}" onclick="toggleHabit('${h.id}','${d}')" title="${d}">${dl[dayIdx][0]}</div>`;
+    }).join('');
+    return `<div class="habit-row">
+      <div class="habit-name">${esc(h.name)}</div>
+      <div class="habit-days">${dots}</div>
+      <button class="icon-btn" onclick="delHabit('${h.id}')">✕</button></div>`;
+  }).join('');
+}
+function openHabitModal(){
+  openModal(`<h3>Новая привычка</h3>
+    <label>Название</label><input id="habit-name" placeholder="Зарядка, чтение, вода...">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="saveHabit()">Сохранить</button></div>`);
+}
+function saveHabit(){
+  const n=document.getElementById('habit-name').value.trim();
+  if(!n){alert('Введи название');return;}
+  DB.habits.push({id:uid(),name:n,days:{}});save();closeModal();renderAll();
+}
+function toggleHabit(id,date){const h=DB.habits.find(x=>x.id===id);if(!h.days)h.days={};h.days[date]=!h.days[date];save();renderHabits();renderDashboard();}
+function delHabit(id){if(!confirm('Удалить?'))return;DB.habits=DB.habits.filter(x=>x.id!==id);save();renderAll();}
+
+/* NOTES */
+function renderNotes(){
+  const c=document.getElementById('notes-list');
+  if(!DB.notes.length){c.innerHTML='<div class="empty">Записей нет</div>';return;}
+  c.innerHTML=DB.notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(n=>`
+    <div class="note-card" onclick="openNoteModal('${n.id}')">
+      <h4>${esc(n.title)}</h4>
+      <p>${esc(n.content).slice(0,150)}</p>
+      <div class="date">${fmtDate(n.date)}</div></div>`).join('');
+}
+function openNoteModal(id){
+  const n=id?DB.notes.find(x=>x.id===id):{title:'',content:'',date:today()};
+  openModal(`<h3>${id?'Запись':'Новая запись'}</h3>
+    <label>Заголовок</label><input id="note-title" value="${esc(n.title)}">
+    <label>Дата</label><input id="note-date" type="date" value="${n.date}">
+    <label>Текст</label><textarea id="note-content" rows="8" placeholder="О чём думаешь?">${esc(n.content)}</textarea>
+    <div class="modal-actions">
+      ${id?`<button class="btn danger" onclick="delNote('${id}')">Удалить</button>`:''}
+      <button class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="saveNote('${id||''}')">Сохранить</button></div>`);
+}
+function saveNote(id){
+  const d={title:document.getElementById('note-title').value.trim()||'Без названия',
+    content:document.getElementById('note-content').value,
+    date:document.getElementById('note-date').value||today()};
+  if(id){const i=DB.notes.findIndex(x=>x.id===id);DB.notes[i]={...DB.notes[i],...d};}
+  else DB.notes.push({id:uid(),...d});
+  save();closeModal();renderAll();
+}
+function delNote(id){if(!confirm('Удалить запись?'))return;DB.notes=DB.notes.filter(x=>x.id!==id);save();closeModal();renderAll();}
+
+/* EXPORT / IMPORT */
+function exportData(){
+  const b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement('a');
+  a.href=u;a.download='lifehub-backup-'+today()+'.json';a.click();
+  URL.revokeObjectURL(u);
+}
+function importData(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{const data=JSON.parse(r.result);DB=Object.assign(DB,data);
+        save();renderAll();alert('Импортировано!');}
+      catch(err){alert('Ошибка импорта');}
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+load();
+renderAll();
+</script>
 </body>
 </html>
